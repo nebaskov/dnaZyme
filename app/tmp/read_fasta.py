@@ -1,19 +1,11 @@
+import os
+
 import pandas as pd
 from Bio import SeqIO
+from dotenv import load_dotenv
 
-
-def convert_to_fasta(
-    seq_df: pd.DataFrame,
-    seq_column: str | pd.Index,
-    id_column: str | pd.Index,
-    path: str,
-) -> None:
-    sequences: list[str] = seq_df[seq_column].tolist()
-    ids: list[int] = seq_df[id_column].tolist()
-    fasta = open(path, 'w')
-    for idx, seq in zip(ids, sequences):
-        fasta.write('>' + str(idx) + '\n' + seq + '\n')
-    fasta.close()
+load_dotenv()
+DATA_PATH = os.getenv('DATA_PATH')
 
 
 def read_fasta(path: str) -> dict[str, str]:
@@ -39,3 +31,17 @@ def fasta_to_dataframe(
         data.to_csv(save_path, index=False)
 
     return data
+
+
+if __name__ == '__main__':
+    filepath = 'aligned_sequences.fasta'
+    processed_sequences: dict[str, str] = read_fasta(
+        os.path.join(DATA_PATH, filepath)
+    )
+    data = pd.DataFrame(columns=['id', 'sequence'])
+    data['id'] = list(processed_sequences.keys())
+    data['sequence'] = list(processed_sequences.values())
+    data.to_csv(
+        os.path.join(DATA_PATH, 'aligned_sequences.csv'),
+        index=False
+    )

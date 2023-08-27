@@ -20,6 +20,10 @@ class Counter:
         for seq in sequences:
             seq_tokens = set(seq.upper())
             uniq_tokens.update(seq_tokens)
+
+        if '-' in uniq_tokens:
+            uniq_tokens.remove('-')
+
         return list(uniq_tokens)
 
     @staticmethod
@@ -41,7 +45,7 @@ class Counter:
             list of cleaned sequences
         """
         clean_sequences: list[str] = [
-            ''.join(re.findall(r'[a-zA-Z]+', sequence))
+            ''.join(re.findall(r'[a-zA-Z]+|[-]+', sequence))
             for sequence in sequences
         ]
         return clean_sequences
@@ -55,7 +59,8 @@ class Counter:
         """
         split_sequence = list(sequence.upper())
         for idx in range(len(split_sequence)):
-            self.count_dict[idx][split_sequence[idx]] += 1
+            if split_sequence[idx] != '-':
+                self.count_dict[idx][split_sequence[idx]] += 1
 
     def get_max_len(self, sequences: list[str]) -> int:
         """Get maximum length of sequences in input list
