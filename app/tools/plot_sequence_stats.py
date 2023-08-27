@@ -1,7 +1,13 @@
+import os
+
 import pandas as pd
 import plotly.express as px
+from dotenv import load_dotenv
 
 from tools import Counter
+
+load_dotenv()
+DATA_PATH = os.getenv('DATA_PATH')
 
 
 def get_sequences(path: str) -> list[str]:
@@ -41,3 +47,13 @@ def plot_histograms(
         fig.write_image('pictures/sequences_barplot.png')
     else:
         print('No image saving')
+
+
+def main(path: str) -> None:
+    sequences: list[str] = get_sequences(path)
+    count_dict, vocabulary = count_tokens(sequences)
+    plot_histograms(count_dict, vocabulary)
+
+
+if __name__ == '__main__':
+    main(path=os.path.join(DATA_PATH, 'preprocessed_dataset.xlsx'))
