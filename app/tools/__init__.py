@@ -4,3 +4,4 @@ from .seq_funcs import (
     read_fasta,
     fasta_to_dataframe
 )
+from .plot_sequence_stats import plot_seq_stats

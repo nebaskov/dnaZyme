@@ -161,11 +161,11 @@ def plot_lines(
         print('No image saving')
 
 
-def main(
-    path: str,
+def plot_seq_stats(
+    filepath: str,
     options: list[Literal['barplot'] | Literal['lineplot']]
 ) -> None:
-    sequences: list[str] = get_sequences(path)
+    sequences: list[str] = get_sequences(filepath)
     count_dict, vocabulary = count_tokens(sequences)
     if 'barplot' in options:
         plot_histograms(count_dict, vocabulary)
@@ -174,7 +174,7 @@ def main(
 
 
 if __name__ == '__main__':
-    main(
-        path=os.path.join(DATA_PATH, 'aligned_sequences.csv'),
+    plot_seq_stats(
+        filepath=os.path.join(DATA_PATH, 'aligned_sequences.csv'),
         options=['barplot', 'lineplot']
     )
