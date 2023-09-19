@@ -39,3 +39,15 @@ def fasta_to_dataframe(
         data.to_csv(save_path, index=False)
 
     return data
+
+
+def process_fasta(read_path: str, save_path: str) -> None:
+    raw_fasta: pd.DataFrame = fasta_to_dataframe(read_path)
+    raw_fasta.drop_duplicates(subset='sequence', inplace=True)
+    raw_fasta.sort_values(by='id', inplace=True)
+    convert_to_fasta(
+        raw_fasta,
+        'sequence',
+        'id',
+        save_path
+    )
