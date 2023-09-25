@@ -36,7 +36,11 @@ def get_levenshtein_analysis(sequence_df: pd.DataFrame) -> tuple[
 
     k = 2
     connectivity = kneighbors_graph(pos, n_neighbors=k, include_self=False)
-    model = AgglomerativeClustering(n_clusters=k, linkage='ward', connectivity=connectivity)
+    model = AgglomerativeClustering(
+        n_clusters=k,
+        linkage='ward',
+        connectivity=connectivity
+    )
     model.fit(pos)
     return model, pos
 
@@ -46,7 +50,13 @@ def plot_levenshtein_analysis_1(sequence_df: pd.DataFrame):
     model, pos = get_levenshtein_analysis(sequence_df)
     log_kobs = np.log10(sequence_df['kobs'])
     norm = plt.Normalize(log_kobs.min(), log_kobs.max())
-    cmap = ListedColormap(["#2E4451", "#9C5551", "#747178", "#E0B3AD", "#DAD1D2"])
+    cmap = ListedColormap([
+        "#2E4451",
+        "#9C5551",
+        "#747178",
+        "#E0B3AD",
+        "#DAD1D2"
+    ])
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     ax1 = sns.scatterplot(
         x=pos[:, 0],
@@ -91,12 +101,7 @@ def plot_frequency(sequence_df: pd.DataFrame):
         "#747178",
         "#E0B3AD"
     ]
-    colors_text: list[str] = [
-        'purple'
-        'green',
-        'red',
-        'blue',
-    ]
+
     return token_df, colors
 
 
@@ -107,7 +112,6 @@ def plot_full_analysis(
     fig, ax = plt.subplots(2, 2, dpi=200)
     plt.sca(ax[1, 0])
     plot_levenshtein_analysis_1(sequence_df)
-
 
     plt.sca(ax[0, 0])
     ax[0, 0].set_title('DNAzyme sequence clustering')

@@ -30,7 +30,8 @@ def align_sequences(path: str, seq_column: str = None) -> Alignment:
 
     Args:
         path: path to fasta, excel or csv file containing sequences
-        seq_column: the name of column containing sequence data if file type is excel or csv
+        seq_column: the name of column containing sequence data if file 
+        type is excel or csv
 
     Returns:
         list[str]: list of aligned sequences
