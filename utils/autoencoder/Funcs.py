@@ -114,7 +114,7 @@ def encoding(sequences_list, polymer_type, descriptors, num):
 
 
 def generate_latent_representations(
-    sequant_encoded_sequences,
+    encoded_sequences,
     path_to_model_folder=''
 ):
     trained_model = tf.keras.models.load_model(path_to_model_folder)
@@ -122,5 +122,5 @@ def generate_latent_representations(
     layer_name = 'Latent'
     intermediate_layer_model = Model(inputs=trained_model.input,
                                      outputs=trained_model.get_layer(layer_name).output)
-    latent_representation = intermediate_layer_model.predict(sequant_encoded_sequences)
+    latent_representation = intermediate_layer_model.predict(encoded_sequences)
     return latent_representation

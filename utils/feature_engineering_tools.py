@@ -161,7 +161,7 @@ def calculate_autoencoder(df_ml, seq_column_name):
         num=96
     )
     x_autoencoder = generate_latent_representations(
-        sequant_encoded_sequences=encoded_sequences,
+        encoded_sequences=encoded_sequences,
         path_to_model_folder=r'autoencoder/nucleic_acids'
     )
     return x_autoencoder
