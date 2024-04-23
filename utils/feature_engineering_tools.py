@@ -5,13 +5,13 @@ import numpy as np
 import pymatgen.core as mg
 from PyBioMed import Pydna
 
-from autoencoder import (
+from utils.autoencoder import (
     encoding,
     generate_latent_representations,
     filter_sequences,
     generate_rdkit_descriptors
 )
-from constants import (
+from utils.constants import (
     similar_compounds,
     properties,
     kmer_2_dict
@@ -109,7 +109,8 @@ def get_pymatgen_descriptors(element, charge):
     return descriptors_set
 
 
-def calculate_ion_descriptors(metal_ions):
+def calculate_ion_descriptors(row, cofactor_column_name):
+    metal_ions = row[cofactor_column_name]
     lst = metal_ions.strip("[]").replace("'", "").split(",")
     if ('metal ion dependency not reported' in metal_ions) | ('M2+-independent' in metal_ions) | (lst == ['']) | (
             'Mg2+-independent' in metal_ions):
@@ -162,7 +163,7 @@ def calculate_autoencoder(df_ml, seq_column_name):
     )
     x_autoencoder = generate_latent_representations(
         encoded_sequences=encoded_sequences,
-        path_to_model_folder=r'autoencoder/nucleic_acids'
+        path_to_model_folder=r'utils/autoencoder/nucleic_acids'
     )
     return x_autoencoder
 
@@ -176,7 +177,9 @@ def get_full_descriptors_set(df, seq_column_name, buffer_column_name, cofactor_c
         df_conditions.loc[:, i] = df_conditions.loc[:, i].apply(convert_values)
     df_conditions['cofactor concentration'] = df_conditions.apply(lambda row: merge_cofactors(row), axis=1)
     df_conditions['temperature'] = df[temperature_column_name]
-    df_conditions = df_conditions.dropna(thresh=30, axis=1).drop(['Mg2+', 'Zn2+', 'Mn2+', 'EDTA'], axis=1).fillna(0)
+
+    df_conditions = df_conditions[['pH', 'NaCl', 'KCl', 'cofactor concentration', 'temperature']].fillna(0)
+    print(df_conditions.columns)
     df_cofactor = pd.DataFrame()
     df_cofactor[
         [
@@ -188,8 +191,8 @@ def get_full_descriptors_set(df, seq_column_name, buffer_column_name, cofactor_c
             'ionic_radii',
             'Z'
         ]
-    ] = df[cofactor_column_name].apply(
-        calculate_ion_descriptors, axis=1, result_type='expand'
+    ] = df.apply(
+        lambda row:calculate_ion_descriptors(row, cofactor_column_name), axis=1, result_type='expand'
     ).fillna(0)
     df_sequence = pd.DataFrame(np.concatenate(
         (
